@@ -1,0 +1,28 @@
+version: '3.8'
+services:
+  app:
+    build: ./
+    volumes:
+      - .:/usr/src/app
+    container_name: docker-node-tut
+    restart: always
+    ports:
+      - 8080:8080
+    command: bash -c /usr/src/app/start.sh
+    env_file: .env
+  db:
+    image: postgres:15
+    restart: always
+    environment:
+      - POSTGRES_DB=${DB_NAME}
+      - POSTGRES_USER=${DB_USERNAME}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_PORT=5432
+    ports:
+      - '5432:5432'
+    volumes:
+      - ./data.sql:/docker-entrypoint-initdb.d/init.sql
+    env_file: .env
+volumes:
+  db:
+    driver: local
